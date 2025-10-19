@@ -1,50 +1,74 @@
-# Welcome to your Expo app 👋
+# 📝 To-Do-List App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Aplicación móvil desarrollada en **React Native con Expo** para la gestión de tareas diarias.  
+Incluye persistencia local, calendario con clima, vista de estadísticas y modo oscuro.
 
-## Get started
+---
 
-1. Install dependencies
+## 🚀 Tecnologías y framework
 
+- **Framework:** React Native con Expo  
+- **Lenguaje:** TypeScript  
+- **Gestión de estado:** Context API  
+- **Persistencia local:** AsyncStorage  
+- **Clima:** API de OpenWeatherMap  
+- **Navegación:** `expo-router` con tabs inferiores  
+
+Se eligió **React Native** porque permite desarrollar una **aplicación nativa**, no web ni PWA, cumpliendo con los requisitos académicos.
+
+---
+
+## 📲 Funcionalidades principales
+
+- Agregar, editar y eliminar tareas.  
+- Marcar tareas como completadas o pendientes.  
+- Vista de calendario mensual con clima y temperatura diaria.  
+- Estadísticas automáticas de tareas.  
+- Modo oscuro/claro con persistencia local del tema.
+
+---
+
+## 💾 Persistencia
+
+La aplicación almacena los datos localmente mediante `AsyncStorage`, garantizando que las tareas se conserven al cerrar la app.
+
+---
+
+## 🧩 Estructura del proyecto
+
+app/
+├── tabs/
+│ ├── tasks.tsx # Lista de tareas
+│ ├── new.tsx # Nueva tarea
+│ ├── calendar.tsx # Calendario con clima
+│ └── statsScreen.tsx # Estadísticas
+├── context/
+│ └── AppContext.tsx # Contexto global y modo oscuro
+├── services/
+│ └── storage.ts # Persistencia local
+└── constants/
+└── Config.ts # API key de OpenWeather
+
+
+---
+
+## 🧠 Decisiones de diseño (UI/UX)
+
+- Se optó por una **navegación por pestañas** para una experiencia rápida e intuitiva.  
+- Colores neutros y tipografía clara para mejorar legibilidad.  
+- Modo oscuro persistente para comodidad visual.  
+- Íconos representativos para cada pantalla.
+
+---
+
+## ⚙️ Cómo ejecutar el proyecto
+
+1. Clona el repositorio:
    ```bash
+   git clone https://github.com/Freddygt89/To-Do-List.git
+
+## Instala dependencias: 
    npm install
-   ```
 
-2. Start the app
-
-   ```bash
+## Ejecuta en Expo: 
    npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
