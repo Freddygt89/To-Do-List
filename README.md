@@ -35,7 +35,7 @@ La aplicación almacena los datos localmente mediante `AsyncStorage`, garantizan
 ---
 
 ## 🧩 Estructura del proyecto
-
+```bash
 app/
 ├── tabs/
 │ ├── tasks.tsx # Lista de tareas
@@ -47,8 +47,8 @@ app/
 ├── services/
 │ └── storage.ts # Persistencia local
 └── constants/
-└── Config.ts # API key de OpenWeather
-
+    └── Config.ts # API key de OpenWeather
+```
 
 ---
 
