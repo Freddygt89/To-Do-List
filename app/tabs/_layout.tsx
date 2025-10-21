@@ -2,10 +2,16 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import React from "react";
-import { useTheme } from "../../context/ThemeContext";
+import { useAppContext } from "../../context/AppContext";
 
-export default function TabsLayout() {
-  const { isDark } = useTheme();
+/**
+ * Layout de las pestañas (Tabs).
+ * Usa isDarkMode del AppContext para colorear la tab bar.
+ */
+
+export default function TabsLayout(): React.ReactElement {
+  const { isDarkMode } = useAppContext();
+  const isDark = isDarkMode;
 
   return (
     <Tabs
@@ -13,8 +19,8 @@ export default function TabsLayout() {
         headerShown: false,
         tabBarActiveTintColor: isDark ? "#4a90e2" : "#007aff",
         tabBarStyle: {
-          backgroundColor: isDark ? "#1e1e1f" : "#fff",
-          borderTopColor: isDark ? "#333" : "#ccc",
+          backgroundColor: isDark ? "#111111" : "#fff",
+          borderTopColor: isDark ? "#222" : "#e6e6e6",
         },
       }}
     >

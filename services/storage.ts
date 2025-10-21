@@ -1,6 +1,12 @@
-// services/storage.ts
+// app/services/storage.ts
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Task } from "../types";
+
+/**
+ * Service simple para persistir tareas en AsyncStorage.
+ * - KEY: "@tasks_v1"
+ * - saveTasks / loadTasks
+ */
 
 const TASKS_KEY = "@tasks_v1";
 

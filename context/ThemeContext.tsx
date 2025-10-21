@@ -1,5 +1,5 @@
 // context/ThemeContext.tsx
-import AsyncStorage from "@react-native-async-storage/async-storage";
+/*import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 type ThemeContextType = {
@@ -36,3 +36,4 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
 };
 
 export const useTheme = () => useContext(ThemeContext);
+*/

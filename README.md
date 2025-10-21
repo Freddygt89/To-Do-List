@@ -8,7 +8,7 @@ Incluye persistencia local, calendario con clima, vista de estadísticas y modo 
 ## 🚀 Tecnologías y framework
 
 - **Framework:** React Native con Expo  
-- **Lenguaje:** TypeScript  
+- **Lenguaje:** JavaScript / TypeScript
 - **Gestión de estado:** Context API  
 - **Persistencia local:** AsyncStorage  
 - **Clima:** API de OpenWeatherMap  
@@ -18,13 +18,13 @@ Se eligió **React Native** porque permite desarrollar una **aplicación nativa*
 
 ---
 
-## 📲 Funcionalidades principales
+## 🚀 Características principales
 
-- Agregar, editar y eliminar tareas.  
-- Marcar tareas como completadas o pendientes.  
-- Vista de calendario mensual con clima y temperatura diaria.  
-- Estadísticas automáticas de tareas.  
-- Modo oscuro/claro con persistencia local del tema.
+- ✅ Agregar, editar y eliminar tareas.
+- 📅 Visualizar calendario con recordatorios.
+- 🌙 Alternar entre modo claro y oscuro.
+- ⚙️ Configurar opciones desde el menú de ajustes.
+- 💾 Almacenamiento local con `AsyncStorage`.
 
 ---
 
@@ -60,6 +60,7 @@ app/
 - Íconos representativos para cada pantalla.
 
 ---
+
 
 ## ⚙️ Cómo ejecutar el proyecto
 

@@ -1,21 +1,26 @@
 // app/tabs/index.tsx
 import { AntDesign } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import { FlatList, StyleSheet, Switch, Text, TouchableOpacity, View } from "react-native";
+import { useAppContext } from "../../context/AppContext";
 import { loadTasks, saveTasks } from "../../services/storage";
 import { Task } from "../../types";
 import Header from "../components/Header";
 import TaskItem from "../components/TaskItem";
 
-const THEME_KEY = "@theme_pref"; // "light" | "dark"
+/**
+ * Pantalla de "Mis Tareas"
+ * - Muestra la lista (persistida en AsyncStorage via services/storage)
+ * - Contiene el switch que controla el tema global (AppContext)
+ * - Al crear/editar/guardar tareas llamamos a saveTasks para persistir
+ */
 
 export default function TasksScreen(): React.ReactElement {
   const router = useRouter();
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [theme, setTheme] = useState<"light" | "dark">("light");
+  const { isDarkMode, toggleTheme } = useAppContext();
 
   const read = useCallback(async () => {
     const loaded = await loadTasks();
@@ -23,7 +28,7 @@ export default function TasksScreen(): React.ReactElement {
   }, []);
 
   useEffect(() => {
-    // guarda automáticamente cuando cambian tareas
+    // persiste automáticamente cuando cambia la lista
     saveTasks(tasks);
   }, [tasks]);
 
@@ -32,29 +37,6 @@ export default function TasksScreen(): React.ReactElement {
       read();
     }, [read])
   );
-
-  // load theme on mount
-  useEffect(() => {
-    (async () => {
-      try {
-        const raw = await AsyncStorage.getItem(THEME_KEY);
-        if (raw === "dark") setTheme("dark");
-        else setTheme("light");
-      } catch (e) {
-        console.error("Error loading theme", e);
-      }
-    })();
-  }, []);
-
-  async function toggleTheme(val?: boolean) {
-    const next = typeof val === "boolean" ? (val ? "dark" : "light") : theme === "light" ? "dark" : "light";
-    setTheme(next);
-    try {
-      await AsyncStorage.setItem(THEME_KEY, next);
-    } catch (e) {
-      console.error("Error saving theme", e);
-    }
-  }
 
   function toggleStatus(id: string) {
     setTasks((prev) =>
@@ -70,16 +52,17 @@ export default function TasksScreen(): React.ReactElement {
     setTasks((prev) => prev.filter((t) => t.id !== id));
   }
 
-  const isDark = theme === "dark";
+  const isDark = isDarkMode;
   const backgroundStyle = { backgroundColor: isDark ? "#0b0b0f" : "#f7f7f7", flex: 1 };
   const textColor = isDark ? "#fff" : "#111";
 
   return (
     <View style={backgroundStyle}>
       <Header title="Mis Tareas" />
+      {/* barra superior con el switch global */}
       <View style={[styles.topRow, { backgroundColor: isDark ? "#0b0b0f" : "#fff" }]}>
         <Text style={[styles.themeLabel, { color: textColor }]}>Modo oscuro</Text>
-        <Switch value={isDark} onValueChange={(v) => toggleTheme(v)} />
+        <Switch value={isDark} onValueChange={() => toggleTheme()} />
       </View>
 
       <View style={styles.container}>

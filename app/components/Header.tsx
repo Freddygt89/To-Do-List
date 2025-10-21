@@ -3,15 +3,18 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { useAppContext } from "../../context/AppContext";
 
+/**
+ * Header reutilizable: muestra título y saludo con el nombre (si existe).
+ * No controla el tema directamente — el color del fondo lo ajustan las pantallas.
+ */
+
 export default function Header({ title }: { title: string }): React.ReactElement {
   const { name } = useAppContext();
 
   return (
     <View style={styles.header}>
       <Text style={styles.h1}>{title}</Text>
-      <Text style={styles.greeting}>
-        {name ? `Hola, ${name} 👋` : "Bienvenido 👋"}
-      </Text>
+      <Text style={styles.greeting}>{name ? `Hola, ${name} 👋` : "Bienvenido 👋"}</Text>
     </View>
   );
 }

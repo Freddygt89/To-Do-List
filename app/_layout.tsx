@@ -1,32 +1,32 @@
 // app/_layout.tsx
-import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { Stack } from "expo-router";
 import React from "react";
 import { AppProvider, useAppContext } from "../context/AppContext";
 
 /**
- * Nota: LayoutContent usa el hook `useAppContext()` y por eso debe
- * estar definido dentro del árbol de AppProvider.
+ * Nota: LayoutContent usa useAppContext(), por eso debe renderizarse
+ * **dentro** de AppProvider.
  */
+
 function LayoutContent() {
   const { isDarkMode } = useAppContext();
 
   return (
-    <ThemeProvider value={isDarkMode ? DarkTheme : DefaultTheme}>
-      <Stack
-        screenOptions={{
-          headerShown: false,
-          contentStyle: { backgroundColor: isDarkMode ? "#0b0b0f" : "#ffffff" },
-        }}
-      >
-        <Stack.Screen name="tabs" />
-      </Stack>
-    </ThemeProvider>
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        // contentStyle aplica un fondo a todas las pantallas
+        contentStyle: { backgroundColor: isDarkMode ? "#0b0b0f" : "#ffffff" },
+      }}
+    >
+      <Stack.Screen name="tabs" />
+    </Stack>
   );
 }
 
 export default function RootLayout() {
   return (
+    // proveedor global (tema, nombre, etc.)
     <AppProvider>
       <LayoutContent />
     </AppProvider>

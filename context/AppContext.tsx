@@ -1,47 +1,58 @@
-// context/AppContext.tsx
+// app/context/AppContext.tsx
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { View } from "react-native";
 
-type AppContextType = {
-  example: string;
-  setExample: (val: string) => void;
+/**
+ * Contexto global de la app.
+ * - isDarkMode: controla el tema (claro/oscuro) de la aplicación.
+ * - toggleTheme / setDarkMode: funciones para cambiar el tema.
+ * - name / setName: nombre para saludo (persistente).
+ *
+ * Persistencia: AsyncStorage (keys: "@theme_pref", "@user_name")
+ */
 
-  // Tema (modo oscuro)
+type AppContextType = {
   isDarkMode: boolean;
-  toggleTheme: () => void;
-  setDarkMode: (v: boolean) => void;
+  toggleTheme: () => Promise<void>;
+  setDarkMode: (v: boolean) => Promise<void>;
+
+  name: string;
+  setName: (v: string) => Promise<void>;
 };
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
+const THEME_KEY = "@theme_pref";
+const NAME_KEY = "@user_name";
+
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [example, setExample] = useState("Hola desde AppContext");
-
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
+  const [name, setNameState] = useState<string>("");
 
-  // Cargar preferencia de tema al iniciar
+  // cargar preferencias al inicio
   useEffect(() => {
     (async () => {
       try {
-        const stored = await AsyncStorage.getItem("theme");
-        if (stored === "dark") setIsDarkMode(true);
-        else if (stored === "light") setIsDarkMode(false);
-        // si es null, dejamos false (claro) por defecto
+        const th = await AsyncStorage.getItem(THEME_KEY);
+        setIsDarkMode(th === "dark");
+
+        const nm = await AsyncStorage.getItem(NAME_KEY);
+        if (nm) setNameState(nm);
       } catch (e) {
-        console.warn("No se pudo leer theme de AsyncStorage", e);
+        console.warn("AppProvider: error leyendo AsyncStorage", e);
       }
     })();
   }, []);
 
-  // Cambiar y persistir el tema
+  // toggle y persistencia
   const toggleTheme = async () => {
     try {
       const next = !isDarkMode;
       setIsDarkMode(next);
-      await AsyncStorage.setItem("theme", next ? "dark" : "light");
+      await AsyncStorage.setItem(THEME_KEY, next ? "dark" : "light");
     } catch (e) {
-      console.warn("No se pudo guardar theme en AsyncStorage", e);
+      console.warn("toggleTheme error", e);
       setIsDarkMode((s) => !s);
     }
   };
@@ -49,24 +60,31 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const setDarkMode = async (v: boolean) => {
     try {
       setIsDarkMode(v);
-      await AsyncStorage.setItem("theme", v ? "dark" : "light");
+      await AsyncStorage.setItem(THEME_KEY, v ? "dark" : "light");
     } catch (e) {
-      console.warn("No se pudo guardar theme en AsyncStorage", e);
+      console.warn("setDarkMode error", e);
+    }
+  };
+
+  const setName = async (v: string) => {
+    try {
+      setNameState(v);
+      await AsyncStorage.setItem(NAME_KEY, v);
+    } catch (e) {
+      console.warn("setName error", e);
     }
   };
 
   return (
-    <AppContext.Provider value={{ example, setExample, isDarkMode, toggleTheme, setDarkMode }}>
-      {/* Mantengo el View wrapper para conservar layout previos */}
+    <AppContext.Provider value={{ isDarkMode, toggleTheme, setDarkMode, name, setName }}>
+      {/* Mantengo View wrapper por compatibilidad con tu layout actual */}
       <View style={{ flex: 1 }}>{children}</View>
     </AppContext.Provider>
   );
 }
 
 export function useAppContext() {
-  const context = useContext(AppContext);
-  if (!context) {
-    throw new Error("useAppContext debe usarse dentro de AppProvider");
-  }
-  return context;
+  const ctx = useContext(AppContext);
+  if (!ctx) throw new Error("useAppContext debe usarse dentro de AppProvider");
+  return ctx;
 }

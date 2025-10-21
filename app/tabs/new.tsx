@@ -12,11 +12,17 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  useColorScheme,
 } from "react-native";
+import { useAppContext } from "../../context/AppContext";
 import { loadTasks, saveTasks } from "../../services/storage";
 import { Task } from "../../types";
 import Header from "../components/Header";
+
+/**
+ * Pantalla de creación/edición de tarea.
+ * - Si se abre con editId: carga la tarea para edición.
+ * - Usa isDarkMode del AppContext para ajustar colores.
+ */
 
 const categories = [
   { key: "home", label: "Casa" },
@@ -32,8 +38,8 @@ export default function NewTaskScreen(): React.ReactElement {
   const router = useRouter();
   const dateISOParam = params?.dateISO;
   const editId = params?.editId;
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const { isDarkMode } = useAppContext();
+  const isDark = isDarkMode;
 
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState<string>("other");
@@ -73,7 +79,7 @@ export default function NewTaskScreen(): React.ReactElement {
           setTitle(t.title);
           setCategory(t.category);
           setAllDay(!!t.allDay);
-          setNotes(t.notes ?? "");
+          setNotes((t as any).notes ?? "");
           if (t.time) {
             const [hh, mm] = String(t.time).split(":");
             const dt = new Date(t.dateISO);
@@ -98,9 +104,7 @@ export default function NewTaskScreen(): React.ReactElement {
 
     if (editId) {
       const updated = tasks.map((t) =>
-        t.id === String(editId)
-          ? { ...t, title, category, allDay, time: timeString, dateISO: date.toISOString(), ...(notes ? { notes } : {}) }
-          : t
+        t.id === String(editId) ? { ...t, title, category, allDay, time: timeString, dateISO: date.toISOString(), ...(notes ? { notes } : {}) } : t
       );
       setTasks(updated);
       await saveTasks(updated);
@@ -138,51 +142,24 @@ export default function NewTaskScreen(): React.ReactElement {
       <Header title={editId ? "Editar Tarea" : "Nueva tarea"} />
       <ScrollView contentContainerStyle={{ padding: 12 }}>
         <Text style={[styles.label, { color: isDark ? "#fff" : "#000" }]}>Fecha</Text>
-        <TouchableOpacity
-          onPress={() => setShowDatePicker(true)}
-          style={[
-            styles.input,
-            { backgroundColor: isDark ? "#2c2c2e" : "#fff", borderColor: isDark ? "#444" : "#ddd" },
-          ]}
-        >
+        <TouchableOpacity onPress={() => setShowDatePicker(true)} style={[styles.input, { backgroundColor: isDark ? "#2c2c2e" : "#fff", borderColor: isDark ? "#444" : "#ddd" }]}>
           <Text style={{ color: isDark ? "#fff" : "#000" }}>{date.toLocaleDateString()}</Text>
         </TouchableOpacity>
 
         <Text style={[styles.label, { color: isDark ? "#fff" : "#000" }]}>Título</Text>
-        <TextInput
-          style={[styles.input, { backgroundColor: isDark ? "#2c2c2e" : "#fff", color: isDark ? "#fff" : "#000", borderColor: isDark ? "#444" : "#ddd" }]}
-          placeholder="Título..."
-          placeholderTextColor={isDark ? "#888" : "#aaa"}
-          value={title}
-          onChangeText={setTitle}
-        />
+        <TextInput style={[styles.input, { backgroundColor: isDark ? "#2c2c2e" : "#fff", color: isDark ? "#fff" : "#000", borderColor: isDark ? "#444" : "#ddd" }]} placeholder="Título..." placeholderTextColor={isDark ? "#888" : "#aaa"} value={title} onChangeText={setTitle} />
 
         <Text style={[styles.label, { color: isDark ? "#fff" : "#000" }]}>Categoría</Text>
         <View style={{ flexDirection: "row", flexWrap: "wrap", marginBottom: 8 }}>
           {categories.map((c) => (
-            <TouchableOpacity
-              key={c.key}
-              onPress={() => setCategory(c.key)}
-              style={[
-                styles.catBtn,
-                category === c.key && { backgroundColor: isDark ? "#007aff" : "#e6f0ff", borderColor: isDark ? "#007aff" : "#9ec5ff" },
-                { borderColor: isDark ? "#555" : "#ddd" },
-              ]}
-            >
+            <TouchableOpacity key={c.key} onPress={() => setCategory(c.key)} style={[styles.catBtn, category === c.key && { backgroundColor: isDark ? "#007aff" : "#e6f0ff", borderColor: isDark ? "#007aff" : "#9ec5ff" }, { borderColor: isDark ? "#555" : "#ddd" }]}>
               <Text style={{ color: isDark ? "#fff" : "#000" }}>{c.label}</Text>
             </TouchableOpacity>
           ))}
         </View>
 
         <Text style={[styles.label, { color: isDark ? "#fff" : "#000" }]}>Notas (opcional)</Text>
-        <TextInput
-          value={notes}
-          onChangeText={setNotes}
-          style={[styles.input, { height: 100, backgroundColor: isDark ? "#2c2c2e" : "#fff", color: isDark ? "#fff" : "#000", borderColor: isDark ? "#444" : "#ddd" }]}
-          multiline
-          placeholder="Detalles, observaciones..."
-          placeholderTextColor={isDark ? "#888" : "#aaa"}
-        />
+        <TextInput value={notes} onChangeText={setNotes} style={[styles.input, { height: 100, backgroundColor: isDark ? "#2c2c2e" : "#fff", color: isDark ? "#fff" : "#000", borderColor: isDark ? "#444" : "#ddd" }]} multiline placeholder="Detalles, observaciones..." placeholderTextColor={isDark ? "#888" : "#aaa"} />
 
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginVertical: 8 }}>
           <Text style={{ color: isDark ? "#fff" : "#000" }}>Todo el día</Text>
@@ -198,12 +175,8 @@ export default function NewTaskScreen(): React.ReactElement {
           </>
         )}
 
-        {showDatePicker && (
-          <DateTimePicker value={date} mode="date" display={Platform.OS === "ios" ? "spinner" : "default"} onChange={(e, sel) => { setShowDatePicker(false); if (sel) setDate(sel); }} />
-        )}
-        {showTimePicker && (
-          <DateTimePicker value={time ?? new Date()} mode="time" display={Platform.OS === "ios" ? "spinner" : "default"} onChange={(e, sel) => { setShowTimePicker(false); if (sel) setTime(sel); }} />
-        )}
+        {showDatePicker && <DateTimePicker value={date} mode="date" display={Platform.OS === "ios" ? "spinner" : "default"} onChange={(e, sel) => { setShowDatePicker(false); if (sel) setDate(sel); }} />}
+        {showTimePicker && <DateTimePicker value={time ?? new Date()} mode="time" display={Platform.OS === "ios" ? "spinner" : "default"} onChange={(e, sel) => { setShowTimePicker(false); if (sel) setTime(sel); }} />}
 
         <TouchableOpacity style={[styles.saveBtn, { backgroundColor: isDark ? "#007aff" : "#0a84ff" }]} onPress={onSave}>
           <Text style={{ color: "#fff", fontWeight: "700" }}>{editId ? "Guardar cambios" : "Crear tarea"}</Text>
